@@ -1,0 +1,63 @@
+import { Routes } from '@angular/router';
+import { authGuard, entryGuard, roleGuard } from './core/auth.guard';
+
+export const routes: Routes = [
+  {
+    path: '',
+    title: 'DriveShare · Car sharing made simple',
+    loadComponent: () => import('./pages/welcome.component').then((m) => m.WelcomeComponent),
+  },
+  {
+    path: 'explore',
+    title: 'Explore cars · DriveShare',
+    canActivate: [entryGuard],
+    loadComponent: () => import('./pages/search.component').then((m) => m.SearchComponent),
+  },
+  {
+    path: 'vehicles/:id',
+    title: 'Vehicle · DriveShare',
+    loadComponent: () => import('./pages/vehicle-detail.component').then((m) => m.VehicleDetailComponent),
+  },
+  {
+    path: 'login',
+    title: 'Sign in · DriveShare',
+    loadComponent: () => import('./pages/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    title: 'Create account · DriveShare',
+    loadComponent: () => import('./pages/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'trips',
+    title: 'My trips · DriveShare',
+    canActivate: [authGuard, roleGuard('renter')],
+    loadComponent: () => import('./pages/trips.component').then((m) => m.TripsComponent),
+  },
+  {
+    path: 'profile',
+    title: 'Profile · DriveShare',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/profile.component').then((m) => m.ProfileComponent),
+  },
+  {
+    path: 'host',
+    title: 'Host dashboard · DriveShare',
+    canActivate: [authGuard, roleGuard('host')],
+    loadComponent: () => import('./pages/host-dashboard.component').then((m) => m.HostDashboardComponent),
+    // The list/edit sheet renders inside the dashboard's <router-outlet>, so the dashboard shows (dimmed) behind it.
+    children: [
+      {
+        path: 'vehicles/new',
+        title: 'List your car · DriveShare',
+        loadComponent: () => import('./pages/vehicle-form.component').then((m) => m.VehicleFormComponent),
+      },
+      {
+        path: 'vehicles/:id/edit',
+        title: 'Edit your car · DriveShare',
+        loadComponent: () => import('./pages/vehicle-form.component').then((m) => m.VehicleFormComponent),
+      },
+    ],
+  },
+  { path: '**', redirectTo: '' },
+];
