@@ -1,7 +1,10 @@
 import { Capacitor } from '@capacitor/core';
 
-/** Base URL of the DriveShare API. Change this when you deploy. */
-export const API_URL = Capacitor.getPlatform() === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+const nativeApiUrl = Capacitor.getPlatform() === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+const localWeb = ['localhost', '127.0.0.1'].includes(location.hostname);
+
+/** Web deployments proxy /api and /uploads through Vercel; local/native builds use the dev API. */
+export const API_URL = Capacitor.isNativePlatform() || localWeb ? nativeApiUrl : '';
 export const CURRENCY = 'USD';
 /** Symbol used on map pins (the currency pipe is used everywhere else). */
 export const CURRENCY_SYMBOL = '$';

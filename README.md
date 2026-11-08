@@ -47,7 +47,7 @@ Tables are created automatically on API start (`src/schema.sql` is idempotent). 
 
 ### Install as an app
 
-The client is configured as an installable Progressive Web App (PWA). Build and deploy the production client to a host that serves it over **HTTPS**. The API must also be deployed at an HTTPS URL reachable from the client; configure `API_URL` in `client/src/app/core/util.ts` before building.
+The client is configured as an installable Progressive Web App (PWA). Build and deploy the production client to a host that serves it over **HTTPS**. See the deployment steps below for the Vercel and Render configuration.
 
 - **iPhone/iPad:** Open the HTTPS site in Safari, tap **Share**, then **Add to Home Screen**.
 - **Android:** Open the HTTPS site in Chrome and choose **Install app** / **Add to Home screen** when offered.
@@ -66,7 +66,7 @@ npm run cap:ios       # build web assets, sync, and open the iOS project in Xcod
 npm run cap:android   # build web assets, sync, and open the Android project in Android Studio
 ```
 
-For an Android emulator, the API defaults to `http://10.0.2.2:3000`; for an iOS simulator it defaults to `http://localhost:3000`. Local HTTP is allowed only for those development hosts. To use a physical device or deploy the app, set `API_URL` in `client/src/app/core/util.ts` to an API address reachable from the device. Use HTTPS for deployed apps. After changing the URL or web code, run `npm run cap:sync` before building in Xcode or Android Studio. App Store and Play Store distribution also require platform signing and store setup.
+For an Android emulator, the API defaults to `http://10.0.2.2:3000`; for an iOS simulator it defaults to `http://localhost:3000`. Local HTTP is allowed only for those development hosts. A packaged native app needs an API URL reachable from the device over HTTPS. After changing the URL or web code, run `npm run cap:sync` before building in Xcode or Android Studio. App Store and Play Store distribution also require platform signing and store setup.
 
 **Demo logins** (password `Password123!`): `marcus@example.com`, `keisha@example.com`, `devon@example.com`.
 
@@ -116,17 +116,29 @@ The map uses Leaflet loaded from a CDN in `client/src/index.html` and OpenStreet
 
 ## Status of this build
 
-The Angular production build and PWA artifacts have been verified. The API's location search and booking flows have been exercised locally. The app still needs production hosting, HTTPS, a production database, real payment processing, and operational/legal review before it can accept real rentals.
+The Angular production build and PWA artifacts have been verified. The API's location search and booking flows have been exercised locally. Hosting accounts still need to be configured; real payment processing and operational/legal review are also needed before accepting real rentals.
 
 The demo car photos are bundled under `client/public/assets/demo-cars`; account avatars use initials.
 
+### Deploy web app (Vercel + Render + Neon + R2)
+
+The database is already part of the application: `server/src/schema.sql` defines PostgreSQL tables, `server/src/migrate.js` creates/updates them, and `server/src/db.js` connects using `DATABASE_URL`. Locally it uses the PostgreSQL instance on your computer. A remote host cannot access that local database, so production needs a hosted PostgreSQL service.
+
+1. Create a PostgreSQL project on [Neon](https://neon.tech/) and copy its pooled connection string.
+2. In [Render](https://render.com/), create a Blueprint from this repository and use the root `render.yaml`. Set `DATABASE_URL` to the Neon connection string and `CLIENT_ORIGIN` to your Vercel production URL (for example `https://yaadrive.vercel.app`). Render's first start applies the schema automatically. Keep the generated `JWT_SECRET`.
+3. Create a private bucket and API key in [Cloudflare R2](https://developers.cloudflare.com/r2/). Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET` in the Render service. R2 is required in production because app-server filesystems are temporary; image requests are served by the API from the private bucket.
+4. In [Vercel](https://vercel.com/), import the repository, set the project Root Directory to `client`, and deploy. `client/vercel.json` builds Angular and proxies `/api` and `/uploads` to `https://yaadrive-api.onrender.com`. If Render assigns a different service URL, update both rewrite destinations.
+5. Test `https://yaadrive-api.onrender.com/api/health`, then try sign-up and car search on Vercel. Render's free service may take a little while to wake up.
+
+Do not commit credentials. Put database, JWT, and R2 values only in Render's environment settings. The free Render service may sleep when idle, and Neon free-tier limits apply; upgrade hosting for dependable real-user service.
+
 ## Before going to production
 
-- Deploy the client and API over HTTPS, configure `API_URL`, provision managed PostgreSQL, and keep production secrets in the hosting provider's secret manager.
+- Provision managed PostgreSQL and persistent object storage, deploy the client and API over HTTPS, and keep production secrets in the hosting provider's secret manager.
 - Replace simulated checkout with a payment provider that supports your operating country, marketplace payments, identity checks, and Host payouts. Use the provider's hosted checkout/tokenization so raw card numbers and CVCs never touch this server.
 - Add email/SMS notifications for new requests and status changes.
 - Complete privacy, identity/driver eligibility, insurance, tax, consumer-protection, and marketplace terms review for the countries where DriveShare will operate.
-- Store uploads in object storage (S3 etc.) instead of the server's disk, and add image resizing.
+- Add image resizing for photos uploaded to Cloudflare R2.
 - Add identity and driver's-licence verification, vehicle insurance details and a damage/deposit policy. These are the real-world risks in peer-to-peer rental.
 - Add automated tests (Node's built-in test runner works well with the Express app exported from `src/index.js`).
 - Put the API behind HTTPS and set `NODE_ENV=production`.
