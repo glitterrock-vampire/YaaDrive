@@ -16,11 +16,7 @@ services:
         generateValue: true
       - key: CLIENT_ORIGIN
         sync: false
-      - key: R2_ACCOUNT_ID
+      - key: R2_PROXY_URL
         sync: false
-      - key: R2_ACCESS_KEY_ID
-        sync: false
-      - key: R2_SECRET_ACCESS_KEY
-        sync: false
-      - key: R2_BUCKET
+      - key: R2_PROXY_TOKEN
         sync: false

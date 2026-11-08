@@ -5,8 +5,7 @@ import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { objectStorage } from '../storage.js';
+import { photoStorage } from '../storage.js';
 import { HttpError, requireAccountType, requireAuth } from '../http.js';
 
 export const UPLOAD_DIR = fileURLToPath(new URL('../../uploads', import.meta.url));
@@ -33,21 +32,11 @@ router.get('/:filename', async (req, res) => {
   res.set('Cache-Control', 'public, max-age=604800, immutable');
   res.type(CONTENT_TYPE[extension]);
 
-  if (objectStorage) {
-    try {
-      const { Body } = await objectStorage.client.send(new GetObjectCommand({
-        Bucket: objectStorage.bucket,
-        Key: `uploads/${filename}`,
-      }));
-      if (!Body) throw new HttpError(404, 'Image not found');
-      res.send(Buffer.from(await Body.transformToByteArray()));
-    } catch (error) {
-      if (error instanceof HttpError) throw error;
-      if (error.name === 'NoSuchKey' || error.$metadata?.httpStatusCode === 404) {
-        throw new HttpError(404, 'Image not found');
-      }
-      throw error;
-    }
+  if (photoStorage) {
+    const response = await fetch(`${photoStorage.url}/uploads/${filename}`);
+    if (response.status === 404) throw new HttpError(404, 'Image not found');
+    if (!response.ok) throw new Error(`Photo storage returned HTTP ${response.status}`);
+    res.send(Buffer.from(await response.arrayBuffer()));
     return;
   }
 
@@ -59,14 +48,16 @@ router.get('/:filename', async (req, res) => {
 router.post('/', requireAuth, requireAccountType('host'), upload.single('image'), async (req, res) => {
   if (!req.file) throw new HttpError(400, 'No image received');
   const filename = `${randomUUID()}${EXT[req.file.mimetype]}`;
-  if (objectStorage) {
-    await objectStorage.client.send(new PutObjectCommand({
-      Bucket: objectStorage.bucket,
-      Key: `uploads/${filename}`,
-      Body: req.file.buffer,
-      ContentType: req.file.mimetype,
-      CacheControl: 'public, max-age=604800, immutable',
-    }));
+  if (photoStorage) {
+    const response = await fetch(`${photoStorage.url}/uploads/${filename}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${photoStorage.token}`,
+        'Content-Type': req.file.mimetype,
+      },
+      body: req.file.buffer,
+    });
+    if (!response.ok) throw new Error(`Photo storage returned HTTP ${response.status}`);
   } else {
     await writeFile(path.join(UPLOAD_DIR, filename), req.file.buffer, { flag: 'wx' });
   }

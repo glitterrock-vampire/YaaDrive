@@ -1,0 +1,8 @@
+name = "yaadrive-photo-store"
+main = "src/index.js"
+compatibility_date = "2026-11-08"
+workers_dev = true
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "yaadrive-vehicle-photos"

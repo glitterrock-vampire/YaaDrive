@@ -126,11 +126,11 @@ The database is already part of the application: `server/src/schema.sql` defines
 
 1. Create a PostgreSQL project on [Neon](https://neon.tech/) and copy its pooled connection string.
 2. In [Render](https://render.com/), create a Blueprint from this repository and use the root `render.yaml`. Set `DATABASE_URL` to the Neon connection string and `CLIENT_ORIGIN` to your Vercel production URL (for example `https://yaadrive.vercel.app`). Render's first start applies the schema automatically. Keep the generated `JWT_SECRET`.
-3. Create a private bucket and API key in [Cloudflare R2](https://developers.cloudflare.com/r2/). Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET` in the Render service. R2 is required in production because app-server filesystems are temporary; image requests are served by the API from the private bucket.
+3. Create a private bucket named `yaadrive-vehicle-photos` in [Cloudflare R2](https://developers.cloudflare.com/r2/). Deploy the photo-storage Worker in `server/r2-worker` with `npx wrangler deploy`, then set its deployment URL as `R2_PROXY_URL` in Render and set the matching `R2_PROXY_TOKEN` secret there. The Worker writes to the private bucket; app-server filesystems are temporary.
 4. In [Vercel](https://vercel.com/), import the repository, set the project Root Directory to `client`, and deploy. `client/vercel.json` builds Angular and proxies `/api` and `/uploads` to `https://yaadrive-api.onrender.com`. If Render assigns a different service URL, update both rewrite destinations.
 5. Test `https://yaadrive-api.onrender.com/api/health`, then try sign-up and car search on Vercel. Render's free service may take a little while to wake up.
 
-Do not commit credentials. Put database, JWT, and R2 values only in Render's environment settings. The free Render service may sleep when idle, and Neon free-tier limits apply; upgrade hosting for dependable real-user service.
+Do not commit credentials. Put database, JWT, and photo-storage tokens only in Render's environment settings. The free Render service may sleep when idle, and Neon free-tier limits apply; upgrade hosting for dependable real-user service.
 
 ## Before going to production
 
