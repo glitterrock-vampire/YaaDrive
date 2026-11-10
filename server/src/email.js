@@ -1,7 +1,12 @@
 const BREVO_URL = 'https://api.brevo.com/v3/smtp/email';
 
+export function missingEmailSettings() {
+  return ['BREVO_API_KEY', 'EMAIL_FROM', 'APP_URL']
+    .filter((name) => !process.env[name]?.trim());
+}
+
 export function isEmailConfigured() {
-  return Boolean(process.env.BREVO_API_KEY && process.env.EMAIL_FROM && process.env.APP_URL);
+  return missingEmailSettings().length === 0;
 }
 
 export async function sendVerificationEmail({ email, name, token }) {

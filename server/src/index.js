@@ -5,6 +5,7 @@ import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { pathToFileURL } from 'node:url';
 import { errorHandler } from './http.js';
+import { isEmailConfigured, missingEmailSettings } from './email.js';
 import { migrate } from './migrate.js';
 import authRoutes from './routes/auth.js';
 import bookingRoutes from './routes/bookings.js';
@@ -35,7 +36,7 @@ app.use(express.json({ limit: '100kb' }));
 
 app.use('/uploads', uploadRoutes);
 
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, emailVerificationConfigured: isEmailConfigured() }));
 
 // Slow down password guessing and account spam.
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100, standardHeaders: true, legacyHeaders: false }));
@@ -54,6 +55,10 @@ app.use(errorHandler);
 // Start listening unless imported by tests.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.PORT) || 3000;
+  const missingEmailConfig = missingEmailSettings();
+  if (missingEmailConfig.length) {
+    console.warn(`Email verification is not configured; missing: ${missingEmailConfig.join(', ')}`);
+  }
   migrate()
     .then(() => app.listen(port, () => console.log(`YaadDrive API listening on http://localhost:${port}`)))
     .catch((err) => {
