@@ -20,3 +20,9 @@ services:
         sync: false
       - key: R2_PROXY_TOKEN
         sync: false
+      - key: APP_URL
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

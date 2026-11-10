@@ -37,6 +37,7 @@ export function safeReturnUrl(url: string | null): string {
         </label>
         @if (error()) {
           <p class="alert alert-error" role="alert">{{ error() }}</p>
+          <p class="muted small"><a routerLink="/verify-email">Resend verification email</a></p>
         }
         <button type="submit" class="btn btn-primary" [disabled]="busy() || f.invalid">
           {{ busy() ? 'Signing in…' : 'Sign in' }}

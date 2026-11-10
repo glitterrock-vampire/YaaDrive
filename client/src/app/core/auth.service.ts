@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, ReplaySubject, tap } from 'rxjs';
-import { ApiService, AuthResponse, User } from './api.service';
+import { ApiService, AuthResponse, RegistrationResponse, User } from './api.service';
 
 const TOKEN_KEY = 'driveshare.token';
 
@@ -43,8 +43,12 @@ export class AuthService {
     return this.api.login({ email, password }).pipe(tap((res) => this.store(res)));
   }
 
-  register(body: { accountType: User['accountType']; name: string; email: string; password: string; phone: string; parish: string }): Observable<AuthResponse> {
-    return this.api.register(body).pipe(tap((res) => this.store(res)));
+  register(body: { accountType: User['accountType']; name: string; email: string; password: string; phone: string; parish: string }): Observable<RegistrationResponse> {
+    return this.api.register(body);
+  }
+
+  resendVerificationEmail(email: string): Observable<{ message: string }> {
+    return this.api.resendVerificationEmail(email);
   }
 
   updateProfile(body: Pick<User, 'name' | 'email' | 'phone' | 'parish'>): Observable<User> {

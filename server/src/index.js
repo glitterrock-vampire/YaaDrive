@@ -17,6 +17,7 @@ import vehicleRoutes from './routes/vehicles.js';
 export const app = express();
 
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 // Uploaded images are loaded by the Angular app on a different origin.
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 const allowedOrigins = new Set([

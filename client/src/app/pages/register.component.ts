@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { errorMessage } from '../core/util';
 import { safeReturnUrl } from './login.component';
@@ -22,6 +22,26 @@ import { safeReturnUrl } from './login.component';
           <span class="auth-brand-name"><span>Yaa</span><strong>Drive</strong></span>
           <span class="auth-brand-tagline">SHARE <i>•</i> RENT <i>•</i> RIDE</span>
         </a>
+        @if (verificationEmail(); as email) {
+          <section class="signup-step stack verification-pending" aria-live="polite">
+            <h1>Check your email</h1>
+            @if (verificationEmailSent()) {
+              <p>We sent a verification link to <strong>{{ email }}</strong>. Verify your address before signing in.</p>
+            } @else {
+              <p>Your account was created, but we couldn’t send a verification link to <strong>{{ email }}</strong>. Please try again.</p>
+            }
+            @if (!verificationEmailSent()) {
+              <p class="alert alert-error" role="alert">We couldn’t send the email just now. Please try again.</p>
+            }
+            @if (resendMessage()) {
+              <p class="alert alert-info" role="status">{{ resendMessage() }}</p>
+            }
+            <button type="button" class="btn btn-primary" (click)="resendVerification()" [disabled]="resending()">
+              {{ resending() ? 'Sending…' : 'Resend verification email' }}
+            </button>
+            <a routerLink="/login">Back to sign in</a>
+          </section>
+        } @else {
         <div class="signup-progress" role="progressbar" [attr.aria-valuenow]="step() + 1" [attr.aria-valuemin]="1" [attr.aria-valuemax]="stepCount">
           <span [style.width.%]="((step() + 1) / stepCount) * 100"></span>
         </div>
@@ -127,13 +147,13 @@ import { safeReturnUrl } from './login.component';
         </form>
 
         <p class="muted">Already registered? <a routerLink="/login" [queryParams]="{ returnUrl: returnUrl }">Sign in</a></p>
+        }
       </div>
     </div>
   `,
 })
 export class RegisterComponent {
   private auth = inject(AuthService);
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   protected readonly stepCount = 6;
@@ -155,6 +175,10 @@ export class RegisterComponent {
   };
   protected readonly busy = signal(false);
   protected readonly error = signal('');
+  protected readonly verificationEmail = signal('');
+  protected readonly verificationEmailSent = signal(true);
+  protected readonly resending = signal(false);
+  protected readonly resendMessage = signal('');
   protected readonly returnUrl = safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
 
   protected continue(form: NgForm): void {
@@ -193,10 +217,31 @@ export class RegisterComponent {
       parish,
       password,
     }).subscribe({
-      next: () => this.router.navigateByUrl(this.returnUrl),
+      next: (response) => {
+        this.verificationEmail.set(response.email);
+        this.verificationEmailSent.set(response.emailSent);
+        this.busy.set(false);
+      },
       error: (err) => {
         this.busy.set(false);
         this.error.set(errorMessage(err));
+      },
+    });
+  }
+
+  protected resendVerification(): void {
+    const email = this.verificationEmail();
+    if (!email || this.resending()) return;
+    this.resending.set(true);
+    this.resendMessage.set('');
+    this.auth.resendVerificationEmail(email).subscribe({
+      next: ({ message }) => {
+        this.resendMessage.set(message);
+        this.resending.set(false);
+      },
+      error: (err) => {
+        this.resendMessage.set(errorMessage(err));
+        this.resending.set(false);
       },
     });
   }

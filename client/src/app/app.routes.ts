@@ -29,6 +29,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/register.component').then((m) => m.RegisterComponent),
   },
   {
+    path: 'verify-email',
+    title: 'Verify email · YaadDrive',
+    loadComponent: () => import('./pages/verify-email.component').then((m) => m.VerifyEmailComponent),
+  },
+  {
     path: 'trips',
     title: 'My trips · YaadDrive',
     canActivate: [authGuard, roleGuard('renter')],

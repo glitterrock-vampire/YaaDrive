@@ -10,12 +10,19 @@ export interface User {
   phone: string | null;
   parish: string | null;
   accountType: 'renter' | 'host';
+  emailVerified: boolean;
   createdAt: string;
 }
 
 export interface AuthResponse {
   token: string;
   user: User;
+}
+
+export interface RegistrationResponse {
+  email: string;
+  emailSent: boolean;
+  message: string;
 }
 
 export type Transmission = 'automatic' | 'manual';
@@ -160,8 +167,16 @@ export class ApiService {
   private base = `${API_URL}/api`;
 
   // --- auth
-  register(body: { accountType: User['accountType']; name: string; email: string; password: string; phone: string; parish: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/auth/register`, body);
+  register(body: { accountType: User['accountType']; name: string; email: string; password: string; phone: string; parish: string }): Observable<RegistrationResponse> {
+    return this.http.post<RegistrationResponse>(`${this.base}/auth/register`, body);
+  }
+
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/auth/verify-email`, { token });
+  }
+
+  resendVerificationEmail(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/auth/verify-email/resend`, { email });
   }
   login(body: { email: string; password: string }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.base}/auth/login`, body);

@@ -83,6 +83,18 @@ For an Android emulator, the API defaults to `http://10.0.2.2:3000`; for an iOS 
 - `client/src/app/core/util.ts`: `API_URL` and `CURRENCY`. Change `API_URL` to your HTTPS API when you deploy native apps.
 - Demo seed data uses Jamaican locations and USD prices, and gives each demo account completed booking history; edit `server/src/seed.js` to taste.
 
+## Email verification
+
+New accounts must verify their email before signing in. Verification links expire after 24 hours, and resend requests are rate-limited. Existing accounts remain verified during the schema migration.
+
+Production email uses Brevo's transactional email API. To enable it on Render's free web-service plan:
+
+1. Create a free Brevo account, generate an API key, and add/verify the sender address YaadDrive should use.
+2. Set `BREVO_API_KEY` to the API key, `EMAIL_FROM` to that verified sender, and `APP_URL` to the deployed frontend origin (for example, `https://client-five-omega-12.vercel.app`) in the Render service environment.
+3. Redeploy the API. The database migration runs when the API starts.
+
+The API disables new sign-ups until all three email settings are present; it will not silently create accounts that cannot be verified. For local development, set these values in `server/.env` using a sender configured in Brevo.
+
 ## API overview
 
 All under `/api`. 🔒 = requires `Authorization: Bearer <token>`.
