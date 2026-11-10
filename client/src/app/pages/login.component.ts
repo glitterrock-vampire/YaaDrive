@@ -13,7 +13,7 @@ export function safeReturnUrl(url: string | null): string {
   selector: 'app-login',
   imports: [FormsModule, RouterLink],
   template: `
-    <div class="pad"><div class="auth-card card stack"><a class="brand" routerLink="/"><span class="brand-mark" aria-hidden="true">D</span>DriveShare</a>
+    <div class="pad"><div class="auth-card card stack"><a class="brand" aria-label="YaadDrive" routerLink="/"><span class="brand-mark" aria-hidden="true">Y</span>aadDrive</a>
       <h1>Sign in</h1>
       <form class="stack" (ngSubmit)="submit()" #f="ngForm">
         <label class="field">

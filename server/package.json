@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "API for DriveShare, a peer-to-peer car rental marketplace",
+  "description": "API for YaadDrive, a peer-to-peer car rental marketplace",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

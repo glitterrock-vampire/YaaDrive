@@ -1,4 +1,4 @@
-# DriveShare
+# YaadDrive
 
 A peer-to-peer car rental app. Choose Renter or Host at sign-up, then switch modes anytime from Profile. Your cars, trips, and profile stay on the same account.
 
@@ -10,7 +10,7 @@ A peer-to-peer car rental app. Choose Renter or Host at sign-up, then switch mod
 
 | Area | What it does |
 | --- | --- |
-| App layout | Public welcome screen with DriveShare branding, Sign in, and Create account. Signed-in users can open Explore, a full-screen map with price pins, search, and a nearby-cars sheet. |
+| App layout | Public welcome screen with YaadDrive branding, Sign in, and Create account. Signed-in users can open Explore, a full-screen map with price pins, search, and a nearby-cars sheet. |
 | Accounts | Every member has one active role: Renter or Host. Hosts own/list cars; Renters are connected to cars through bookings. Members can switch modes from Profile. The active role is enforced by the API. Edit your contact details and Jamaican parish from Profile. Sign-in uses bcrypt-hashed passwords and JWT sessions. Driver's licence and national ID details are not collected in the sign-up form. |
 | Listings | "List your car" bottom sheet: up to 8 photos, make, model, year, plate (owner-only), price stepper, weekends on/off, map pin, plus gearbox, fuel, seats, range and description. |
 | Saved cars | Heart any car; saved cars appear on the Profile tab. |
@@ -137,7 +137,7 @@ Do not commit credentials. Put database, JWT, and photo-storage tokens only in R
 - Provision managed PostgreSQL and persistent object storage, deploy the client and API over HTTPS, and keep production secrets in the hosting provider's secret manager.
 - Replace simulated checkout with a payment provider that supports your operating country, marketplace payments, identity checks, and Host payouts. Use the provider's hosted checkout/tokenization so raw card numbers and CVCs never touch this server.
 - Add email/SMS notifications for new requests and status changes.
-- Complete privacy, identity/driver eligibility, insurance, tax, consumer-protection, and marketplace terms review for the countries where DriveShare will operate.
+- Complete privacy, identity/driver eligibility, insurance, tax, consumer-protection, and marketplace terms review for the countries where YaadDrive will operate.
 - Add image resizing for photos uploaded to Cloudflare R2.
 - Add identity and driver's-licence verification, vehicle insurance details and a damage/deposit policy. These are the real-world risks in peer-to-peer rental.
 - Add automated tests (Node's built-in test runner works well with the Express app exported from `src/index.js`).

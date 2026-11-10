@@ -4,57 +4,57 @@ import { authGuard, entryGuard, roleGuard } from './core/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    title: 'DriveShare · Car sharing made simple',
+    title: 'YaadDrive · Car sharing made simple',
     loadComponent: () => import('./pages/welcome.component').then((m) => m.WelcomeComponent),
   },
   {
     path: 'explore',
-    title: 'Explore cars · DriveShare',
+    title: 'Explore cars · YaadDrive',
     canActivate: [entryGuard],
     loadComponent: () => import('./pages/search.component').then((m) => m.SearchComponent),
   },
   {
     path: 'vehicles/:id',
-    title: 'Vehicle · DriveShare',
+    title: 'Vehicle · YaadDrive',
     loadComponent: () => import('./pages/vehicle-detail.component').then((m) => m.VehicleDetailComponent),
   },
   {
     path: 'login',
-    title: 'Sign in · DriveShare',
+    title: 'Sign in · YaadDrive',
     loadComponent: () => import('./pages/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'register',
-    title: 'Create account · DriveShare',
+    title: 'Create account · YaadDrive',
     loadComponent: () => import('./pages/register.component').then((m) => m.RegisterComponent),
   },
   {
     path: 'trips',
-    title: 'My trips · DriveShare',
+    title: 'My trips · YaadDrive',
     canActivate: [authGuard, roleGuard('renter')],
     loadComponent: () => import('./pages/trips.component').then((m) => m.TripsComponent),
   },
   {
     path: 'profile',
-    title: 'Profile · DriveShare',
+    title: 'Profile · YaadDrive',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/profile.component').then((m) => m.ProfileComponent),
   },
   {
     path: 'host',
-    title: 'Host dashboard · DriveShare',
+    title: 'Host dashboard · YaadDrive',
     canActivate: [authGuard, roleGuard('host')],
     loadComponent: () => import('./pages/host-dashboard.component').then((m) => m.HostDashboardComponent),
     // The list/edit sheet renders inside the dashboard's <router-outlet>, so the dashboard shows (dimmed) behind it.
     children: [
       {
         path: 'vehicles/new',
-        title: 'List your car · DriveShare',
+        title: 'List your car · YaadDrive',
         loadComponent: () => import('./pages/vehicle-form.component').then((m) => m.VehicleFormComponent),
       },
       {
         path: 'vehicles/:id/edit',
-        title: 'Edit your car · DriveShare',
+        title: 'Edit your car · YaadDrive',
         loadComponent: () => import('./pages/vehicle-form.component').then((m) => m.VehicleFormComponent),
       },
     ],

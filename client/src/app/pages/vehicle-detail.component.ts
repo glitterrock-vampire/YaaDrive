@@ -295,7 +295,7 @@ export class VehicleDetailComponent implements OnInit {
     const d = this.detail();
     if (!d) return;
     const url = window.location.href;
-    const title = `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model} on DriveShare`;
+    const title = `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model} on YaadDrive`;
     if (navigator.share) {
       navigator.share({ title, url }).catch(() => undefined);
     } else if (navigator.clipboard) {

@@ -54,7 +54,7 @@ app.use(errorHandler);
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.PORT) || 3000;
   migrate()
-    .then(() => app.listen(port, () => console.log(`DriveShare API listening on http://localhost:${port}`)))
+    .then(() => app.listen(port, () => console.log(`YaadDrive API listening on http://localhost:${port}`)))
     .catch((err) => {
       console.error('Failed to start:', err);
       process.exit(1);

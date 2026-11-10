@@ -11,7 +11,7 @@ import { safeReturnUrl } from './login.component';
   template: `
     <div class="pad">
       <div class="auth-card signup-card card stack">
-        <a class="brand" routerLink="/"><span class="brand-mark" aria-hidden="true">D</span>DriveShare</a>
+        <a class="brand" aria-label="YaadDrive" routerLink="/"><span class="brand-mark" aria-hidden="true">Y</span>aadDrive</a>
         <div class="signup-progress" role="progressbar" [attr.aria-valuenow]="step() + 1" [attr.aria-valuemin]="1" [attr.aria-valuemax]="stepCount">
           <span [style.width.%]="((step() + 1) / stepCount) * 100"></span>
         </div>
