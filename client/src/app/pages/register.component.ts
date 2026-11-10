@@ -11,7 +11,17 @@ import { safeReturnUrl } from './login.component';
   template: `
     <div class="pad">
       <div class="auth-card signup-card card stack">
-        <a class="brand" aria-label="YaadDrive" routerLink="/"><span class="brand-mark" aria-hidden="true">Y</span>aadDrive</a>
+        <a class="auth-brand-lockup" aria-label="YaadDrive" routerLink="/">
+          <svg class="auth-brand-mark" viewBox="0 0 250 254" aria-hidden="true">
+            <rect width="250" height="254" rx="38" fill="#0f4a34" />
+            <path d="M0 84 118 6q7-6 14 0l118 78-12 20L125 30 12 104z" fill="#f5b700" />
+            <path d="m150 90 78-2L72 252H17zM22 94l64-4 54 80-28 35z" fill="#f7f4ec" />
+            <path d="M232 104q-97 56-124 148h64q10-82 76-140z" fill="#f5b700" />
+            <path d="m145.7 243.8 5-16.9-4.9-1.7-5.2 17.4zm10.8-31.9 7.7-16-4.5-2.4-8 16.3zm16-30 10.5-15-4.1-3.2-10.7 15.4zm21.3-28.2 13.3-14-3.6-3.7-13.6 14.3zm26.6-26.3 14.6-11.8-3.2-4.2-14.8 12.1z" fill="#06291e" />
+          </svg>
+          <span class="auth-brand-name"><span>Yaa</span><strong>Drive</strong></span>
+          <span class="auth-brand-tagline">SHARE <i>•</i> RENT <i>•</i> RIDE</span>
+        </a>
         <div class="signup-progress" role="progressbar" [attr.aria-valuenow]="step() + 1" [attr.aria-valuemin]="1" [attr.aria-valuemax]="stepCount">
           <span [style.width.%]="((step() + 1) / stepCount) * 100"></span>
         </div>

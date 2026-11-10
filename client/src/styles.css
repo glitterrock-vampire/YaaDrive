@@ -414,6 +414,12 @@ input.ng-invalid.ng-touched, textarea.ng-invalid.ng-touched { border-color: var(
 }
 .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.15rem; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
 .brand-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: #07261b; font-size: 0.95rem; font-weight: 800; }
+.auth-brand-lockup { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 0 auto 4px; color: var(--ink); text-decoration: none; }
+.auth-brand-mark { width: 42px; height: 43px; margin-bottom: 4px; }
+.auth-brand-name { color: var(--ink); font-size: 2rem; font-weight: 800; line-height: 1.15; letter-spacing: -1px; white-space: nowrap; }
+.auth-brand-name strong { color: var(--accent); }
+.auth-brand-tagline { color: var(--muted); font-size: 0.48rem; font-weight: 800; letter-spacing: 3px; line-height: 1.5; }
+.auth-brand-tagline i { color: var(--accent); font-style: normal; }
 
 @media (max-width: 380px) {
   .earnings { grid-template-columns: 1fr; }
